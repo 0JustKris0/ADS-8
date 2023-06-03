@@ -1,6 +1,5 @@
 // Copyright 2021 NNTU-CS
 #include "train.h"
-
 Train::Train() {
     Cage *first = nullptr;
     first = nullptr;
