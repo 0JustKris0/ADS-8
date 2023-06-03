@@ -9,12 +9,12 @@ void Train::addCage(bool light) {
     if (first == nullptr) {
         first = newCage;
         first->next = first;
-        first->pred = first;
+        first->prev = first;
     } else {
         newCage->next = first;
-        newCage->pred = first->prev;
-        first->pred = newCage;
-        newCage->pred->next = newCage;
+        newCage->prev = first->prev;
+        first->prev = newCage;
+        newCage->prev->next = newCage;
     }
 }
 
