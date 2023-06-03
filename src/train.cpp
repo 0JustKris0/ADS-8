@@ -1,49 +1,53 @@
 // Copyright 2021 NNTU-CS
 #include "train.h"
-
-Train::Train() :countOp(-1), first(nullptr) {}
-
+Train::Train() {
+  countOp = 0;
+  first = nullptr;
+}
 void Train::addCage(bool light) {
-    Cage* newCage = new Cage;
-    newCage->light = light;
-    if (first == nullptr) {
-        first = newCage;
-        first->next = first;
-        first->prev = first;
+  Cage* cur = new Cage;
+  cur->light = light;
+  if (first == nullptr) {
+    first = cur;
+    first->prev = first;
+    first->next = first;
+  } else {
+    cur->next = first;
+    cur->prev = first->prev;
+    first->prev->next = cur;
+    first->prev = cur;
+  }
+}
+int Train::getLength() {
+  int  Dynamic_counter = 1;
+  Cage* cur = first;
+  if (cur == nullptr) return 0;
+  cur->light = true;
+  countOp++;
+  cur = cur->next;
+  while (cur) {
+    if (cur->light == false) {
+      Dynamic_counter++;
+      countOp++;
+      cur = cur->next;
     } else {
-        newCage->next = first;
-        newCage->prev = first->prev;
-        first->prev = newCage;
-        newCage->prev->next = newCage;
+      cur->light = false;
+      for (int i = 0; i < Dynamic_counter; i++) {
+        countOp++;
+        cur = cur->prev;
+      }
+      if (cur->light == false) {
+        return Dynamic_counter;
+      } else {
+        Dynamic_counter = 1;
+        countOp++;
+        cur = cur->next;
+      }
     }
+  }
+  return 0;
 }
 
-int Train::getLength() {
-    Cage* temp = first;
-    temp->light = 1;
-    int countTemp = 1;
-    countOp = 0;
-    while (temp) {
-        temp = temp->next;
-        if (!temp->light) {
-            countOp++;
-            countTemp++;
-        } else {
-            countOp++;
-            temp->light = false;
-            for (int i = countTemp; i > 0; i--) {
-                temp = temp->prev;
-                countOp++;
-            }
-            if (!temp->light) {
-                return countTemp;
-            }
-            countTemp = 1;
-        }
-    }
-    return -1;
-}
 int Train::getOpCount() {
-    if (countOp == -1) getLength();
-    return countOp;
+  return countOp;
 }
