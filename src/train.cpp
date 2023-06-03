@@ -1,63 +1,55 @@
 // Copyright 2021 NNTU-CS
 #include "train.h"
-Train::Train() {
-    Cage *first = nullptr;
-    first = nullptr;
-    countOp = 0;
-}
+Train::Train(): countOp(0), first(nullptr) {}
+
 void Train::addCage(bool light) {
-    Cage *item = new Cage;
-    item->next = nullptr;
-    item->prev = nullptr;
-    item->light = light;
-    if (first == nullptr) {
-        first = item;
+    if (first != nullptr) {
+        Cage* dark;
+        dark = new Cage;
+        dark->light = light;
+        dark->next = nullptr;
+        dark->prev = last;
+        last->next = dark;
+        last = dark;
     } else {
-        if (first->next == nullptr) {
-            first->next = item;
-            first->prev = item;
-            item->prev = first;
-            item->next = first;
-        } else {
-            Cage *temp = first;
-            while (temp->next != first) {
-                temp = temp->next;
-            }
-            temp->next = item;
-            item->prev = temp;
-            item->next = first;
-            first->prev = item;
-        }
+        first = new Cage;
+        first->light = light;
+        first->next = nullptr;
+        first->prev = nullptr;
+        last = first;
+        return;
     }
 }
 int Train::getLength() {
-    Cage *item = first;
-    if (item->light == false) {
-        item->light = true;
+        first->light = true;
+        first->prev = last;
+        last->next = first;
+        Cage* ctemp = first;
+        Cage* square = first->next;
+        while (square != nullptr) {
+            if (!square->light) {
+                count++;
+                countOp++;
+                square = square->next;
+            } else {
+                if (square->light) {
+                        square->light = 0;
+                    countOp++;
+                }
+                for (int i = count; i > 0; i--) {
+                    square = square->prev;
+                    countOp++;
+                }
+                if (!square->light) {
+                    break;
+                }
+                square = square->next;
+                count = 1;
+            }
+        }
+        return count;
     }
-    int Result = 0;
-    int Counter = 0;
-    while (1) {
-        item = item->next;
-        countOp += 1;
-        Counter += 1;
-        while (item->light == false) {
-            item = item->next;
-            countOp += 1;
-            Counter += 1;
-        }
-        item->light = false;
-        Result = Counter;
-        while (Counter != 0) {
-            countOp += 1;
-            Counter -= 1;
-            item = item->prev;
-        }
-        if (item->light == false) {
-            return Result;
-        }
-    }
-}
 int Train::getOpCount() {
-    return countOp;
+  return countOp;
 }
+        
