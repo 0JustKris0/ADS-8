@@ -1,53 +1,43 @@
 // Copyright 2021 NNTU-CS
 #include "train.h"
-Train::Train() {
-  countOp = 0;
-  first = nullptr;
-}
+
 void Train::addCage(bool light) {
-  Cage* cur = new Cage;
-  cur->light = light;
-  if (first == nullptr) {
-    first = cur;
-    first->prev = first;
-    first->next = first;
+  if (!first) {
+    Cage* item = new Cage;
+    item->light = light;
+    first = item;
+    last = item;
   } else {
-    cur->next = first;
-    cur->prev = first->prev;
-    first->prev->next = cur;
-    first->prev = cur;
+    Cage* item = new Cage;
+    item->light = light;
+    last->next = item;
+    item->prev = last;
+    last = item;
   }
+  last->next = first;
+  first->prev = last;
 }
+
 int Train::getLength() {
-  int  Dynamic_counter = 1;
-  Cage* cur = first;
-  if (cur == nullptr) return 0;
-  cur->light = true;
-  countOp++;
-  cur = cur->next;
-  while (cur) {
-    if (cur->light == false) {
-      Dynamic_counter++;
-      countOp++;
-      cur = cur->next;
-    } else {
-      cur->light = false;
-      for (int i = 0; i < Dynamic_counter; i++) {
-        countOp++;
-        cur = cur->prev;
+  Cage* temp = first;
+  temp->light = true;
+  while (true) {
+    temp = temp->next;
+    count1++;
+    if (temp->light) {
+      temp->light = false;
+      for (int i = count1; i > 0; i--) {
+        temp = temp->prev;
       }
-      if (cur->light == false) {
-        return Dynamic_counter;
-      } else {
-        Dynamic_counter = 1;
-        countOp++;
-        cur = cur->next;
+      countOp += count1 * 2;
+      if (!temp->light) {
+        return count1;
       }
+      count1 = 0;
     }
   }
   return 0;
 }
-
 int Train::getOpCount() {
   return countOp;
 }
